@@ -11,8 +11,10 @@ class custom_cart_pole(gym.Env):
         self.ax = None
         # Initialize observation space: cart position, cart velocity, pole angle, pole angular velocity
         self.observation_space = spaces.Box(
-            low=np.array([-4.8, -np.inf, -0.418 + np.pi, -np.inf]),
-            high=np.array([4.8, np.inf, 0.418 + np.pi, np.inf]),
+            # low=np.array([-4.8, -np.inf, -0.418 + np.pi, -np.inf]),
+            # high=np.array([4.8, np.inf, 0.418 + np.pi, np.inf]),
+            low=np.array([-4.8, -np.inf, -0.418, -np.inf]),
+            high=np.array([4.8, np.inf, 0.418, np.inf]),
             dtype=np.float32,
         )
 
@@ -37,7 +39,7 @@ class custom_cart_pole(gym.Env):
         np.random.seed(seed)
         # Random initialization: position, velocity, angle, angular velocity
         self.state = np.random.uniform(low=-0.05, high=0.05, size=(4,))
-        self.state[2] += np.pi
+        #self.state[2] += np.pi
         self.steps_beyond_done = None
         return np.array(self.state, dtype=np.float32), {}
 
@@ -55,11 +57,10 @@ class custom_cart_pole(gym.Env):
         #temp = (force + self.pole_mass * self.pole_length * theta_dot * theta_dot * sintheta) / self.total_mass
         #thetaacc = (self.gravity * sintheta - costheta * temp) / (self.pole_length / 2)
         #xacc = temp - (self.pole_mass * self.pole_length * thetaacc * costheta) / self.total_mass
-        #xacc = 1 / (self.cart_mass + self.pole_mass * sintheta * sintheta) *(force + self.pole_mass * sintheta * (self.pole_length * theta_dot * theta_dot + self.gravity * costheta))
-        #thetaacc = 1 / (self.cart_mass + self.pole_mass * sintheta * sintheta) / self.pole_length * (-1*force*costheta - self.pole_mass * theta_dot * theta_dot * costheta * sintheta - self.total_mass * self.gravity * sintheta)
+        
         M = np.array([[self.pole_mass + self.cart_mass, self.pole_mass * self.pole_length * costheta], [self.pole_mass * self.pole_length * costheta, self.pole_mass * self.pole_length * self.pole_length]])
         C = np.array([[0, -1*self.pole_mass* self.pole_length * theta_dot * sintheta],[0, 0]])
-        tau_g = np.array([[0],[-1*self.pole_mass * self.pole_length * self.gravity * sintheta]])
+        tau_g = np.array([[0],[self.pole_mass * self.pole_length * self.gravity * sintheta]])
         B = np.array([[1],[0]])
         U = force
 
@@ -81,8 +82,8 @@ class custom_cart_pole(gym.Env):
         self.state = np.array([x, x_dot, theta, theta_dot], dtype=np.float32)
 
         # Determine if the environment should end (done)
-        done = x < -4.8 + np.pi or x > 4.8 + np.pi or theta < -0.418 + np.pi or theta > 0.418 + np.pi
-
+        # done = x < -2.4 or x > 2.4 or theta < -0.21 + np.pi or theta > 0.21 + np.pi
+        done = x < -2.4 or x > 2.4 or theta < -0.21 or theta > 0.21
         if done:
             reward = 0.0
         else:
@@ -117,7 +118,7 @@ class custom_cart_pole(gym.Env):
         
         # Draw the pole
         pole_x = [x, x + np.sin(theta)]
-        pole_y = [0.3, 0.3 - np.cos(theta)]
+        pole_y = [0.3, 0.3 + np.cos(theta)]
         self.ax.plot(pole_x, pole_y, 'k-', linewidth=2)
         
         # Show the updated plot

@@ -1,5 +1,4 @@
 from custom_env import custom_cart_pole
-import time
 
 env = custom_cart_pole()
 # Start a new episode
@@ -19,7 +18,7 @@ while not done:
    
    total_reward += rew  # Accumulate reward
    
-   print(f"{obs} -> {rew}")
+   #print(f"{obs} -> {rew}")
 
 print(f"Total reward: {total_reward}")
 #env.close()
@@ -38,7 +37,7 @@ model = torch.nn.Sequential(
     torch.nn.Softmax(dim=1)
 )
 
-def run_episode(max_steps_per_episode = 10000,render=True):    
+def run_episode(max_steps_per_episode = 10000,render=False):    
     states, actions, probs, rewards = [],[],[],[]
     state, info = env.reset()
 
@@ -84,7 +83,7 @@ def train_on_batch(x, y):
 alpha = 1e-4
 
 history = []
-for epoch in range(300):
+for epoch in range(1000):
     states, actions, probs, rewards = run_episode()
     one_hot_actions = np.eye(2)[actions.T][0]
     gradients = one_hot_actions-probs

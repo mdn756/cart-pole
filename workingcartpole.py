@@ -2,7 +2,8 @@ import gym
 
 
 # # Initialize environment with correct render mode
-env = gym.make("CartPole-v1", render_mode="human")
+#env = gym.make("CartPole-v1", render_mode="human")
+env = gym.make("CartPole-v1", render_mode=None)
 
 # Start a new episode
 obs, info = env.reset()
@@ -20,7 +21,7 @@ while not done:
    
    total_reward += rew  # Accumulate reward
    
-   print(f"{obs} -> {rew}")
+   #print(f"{obs} -> {rew}")
 
 print(f"Total reward: {total_reward}")
 #env.close()
